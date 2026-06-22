@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>North Forks Apartments</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #000;
+  --bg1: #0d0d0d;
+  --surface: #1c1c1e;
+  --surface2: #2c2c2e;
+  --surface3: #3a3a3c;
+  --text: #f5f5f7;
+  --text2: #ebebf0cc;
+  --muted: #98989d;
+  --blue: #0a84ff;
+  --green: #30d158;
+  --red: #ff453a;
+  --amber: #ff9f0a;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+}
+
+body {
+  background: #111;
+  font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── SPLASH ──────────────────────────────────── */
+#splash {
+  position: fixed; inset: 0; background: #0a0a0a;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 999; transition: opacity 0.6s ease, transform 0.6s ease;
+}
+#splash.hide { opacity: 0; pointer-events: none; }
+#splash.gone { display: none; }
+.splash-tagline { font-size: 13px; color: #6b7057; letter-spacing: 2px; text-transform: uppercase; margin-top: 28px; }
+.splash-bar { width: 160px; height: 2px; background: #1c1c1e; border-radius: 2px; margin-top: 32px; overflow: hidden; }
+.splash-bar-fill { height: 100%; width: 0%; background: #8a9070; border-radius: 2px; animation: load 1.8s ease forwards; }
+@keyframes load { 0%{width:0%} 60%{width:70%} 100%{width:100%} }
+
+/* ── SIDEBAR NAV ─────────────────────────────── */
+.sidenav {
+  width: 200px;
+  min-height: 100vh;
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-shrink: 0;
+}
+.sidenav-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 14px 10px 5px;
+}
+.sidenav-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12.5px;
+  width: 100%;
+  transition: all 0.15s;
+  font-family: inherit;
+  line-height: 1.3;
+}
+.sidenav-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.sidenav-btn.active { background: rgba(255,255,255,0.07); color: var(--text); font-weight: 500; }
+
+/* ── MAIN CONTENT ────────────────────────────── */
+.main { flex: 1; overflow-y: auto; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── PHONE FRAME ─────────────────────────────── */
+.phone-wrap { display: flex; justify-content: center; padding: 40px 24px; }
+.phone {
+  width: 390px;
+  background: #000;
+  border-radius: 48px;
+  border: 9px solid #2c2c2e;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.phone-inner { padding: 20px 20px 32px; }
+
+/* ── CARDS ───────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+}
+.card-inset {
+  background: var(--surface2);
+  border-radius: 13px;
+  padding: 13px 15px;
+}
+
+/* ── INPUTS ──────────────────────────────────── */
+.field-group { margin-bottom: 14px; }
+.field-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 7px;
+  display: block;
+}
+.inp {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 13px;
+  padding: 13px 15px;
+  color: var(--text);
+  font-size: 15px;
+  width: 100%;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.inp:focus { border-color: var(--blue); }
+.inp.error { border-color: var(--red); }
+.inp::placeholder { color: var(--surface3); }
+select.inp { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2398989d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+textarea.inp { resize: none; line-height: 1.5; }
+.err-msg { font-size: 12px; color: var(--red); margin-top: 5px; display: none; }
+
+/* ── BUTTONS ─────────────────────────────────── */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 14px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: -0.2px;
+}
+.btn:active { transform: scale(0.98); opacity: 0.85; }
+.btn-primary { background: var(--text); color: #000; }
+.btn-blue { background: var(--blue); color: #fff; }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
+.btn-sm { padding: 9px 16px; border-radius: 10px; font-size: 13.5px; width: auto; }
+.btn-xs { padding: 7px 13px; border-radius: 9px; font-size: 12.5px; width: auto; }
+
+/* ── BADGES ──────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+}
+.b-blue { background: rgba(10,132,255,0.15); color: #4da6ff; }
+.b-green { background: rgba(48,209,88,0.15); color: #34c759; }
+.b-red { background: rgba(255,69,58,0.15); color: #ff6961; }
+.b-amber { background: rgba(255,159,10,0.15); color: #ffb340; }
+.b-gray { background: rgba(255,255,255,0.08); color: var(--muted); }
+
+/* ── PROGRESS BAR ────────────────────────────── */
+.progress { display: flex; gap: 5px; margin-bottom: 22px; }
+.seg { flex: 1; height: 3px; border-radius: 2px; transition: background 0.3s; }
+.seg.done { background: var(--blue); }
+.seg.pending { background: rgba(255,255,255,0.08); }
+
+/* ── PRIORITY SELECTOR ───────────────────────── */
+.priority-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 14px; }
+.priority-opt {
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 11px;
+  text-align: center;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.15s;
+  font-size: 13px;
+  color: var(--muted);
+  font-family: inherit;
+}
+.priority-opt:hover { border-color: var(--border2); }
+.priority-opt.sel-low { border-color: var(--muted); color: var(--text); }
+.priority-opt.sel-med { border-color: var(--blue); color: var(--blue); font-weight: 600; background: rgba(10,132,255,0.08); }
+.priority-opt.sel-high { border-color: var(--amber); color: var(--amber); font-weight: 600; background: rgba(255,159,10,0.08); }
+.priority-opt.sel-urgent { border-color: var(--red); color: var(--red); font-weight: 600; background: rgba(255,69,58,0.08); }
+
+/* ── PHOTO GRID ──────────────────────────────── */
+.photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 10px; }
+.photo-slot {
+  aspect-ratio: 1;
+  background: var(--surface2);
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1.5px dashed rgba(255,255,255,0.1);
+  transition: all 0.15s;
+  font-size: 22px;
+  flex-direction: column;
+  gap: 4px;
+}
+.photo-slot:hover { border-color: var(--blue); }
+.photo-slot.filled { border-style: solid; border-color: rgba(48,209,88,0.4); background: rgba(48,209,88,0.06); }
+.photo-slot-label { font-size: 10px; color: var(--muted); }
+
+/* ── ADMIN LAYOUT ────────────────────────────── */
+.admin-wrap { padding: 28px 32px; max-width: 960px; }
+.admin-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.page-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 3px; }
+.page-sub { font-size: 13px; color: var(--muted); }
+
+/* ── KPI CARDS ───────────────────────────────── */
+.kpi-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 20px; }
+.kpi {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.kpi:hover { border-color: var(--border2); }
+.kpi.kpi-active { border-color: var(--blue); }
+.kpi-num { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; margin-bottom: 5px; }
+.kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+/* ── FILTER PILLS ────────────────────────────── */
+.filter-row { display: flex; gap: 7px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-pill {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.filter-pill:hover { border-color: var(--border2); color: var(--text); }
+.filter-pill.active { background: rgba(10,132,255,0.12); border-color: rgba(10,132,255,0.4); color: var(--blue); font-weight: 600; }
+
+/* ── TABLE ───────────────────────────────────── */
+.table-wrap {
+  background: var(--surface);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 11px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13.5px; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tbody tr { cursor: pointer; transition: background 0.12s; }
+tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
+/* ── DETAIL LAYOUT ───────────────────────────── */
+.detail-grid { display: grid; grid-template-columns: 1fr 270px; gap: 18px; }
+.back-link { font-size: 13px; color: var(--blue); cursor: pointer; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 5px; }
+.back-link:hover { opacity: 0.8; }
+
+/* ── NOTES ───────────────────────────────────── */
+.note {
+  border-radius: 13px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.note-internal { background: rgba(255,159,10,0.07); border: 1px solid rgba(255,159,10,0.18); }
+.note-public { background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+.note-meta { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.note-tag-internal { font-size: 11px; font-weight: 600; color: var(--amber); }
+.note-tag-public { font-size: 11px; font-weight: 500; color: var(--muted); }
+
+/* ── TIMELINE ────────────────────────────────── */
+.timeline { position: relative; padding-left: 22px; }
+.tl-item { position: relative; padding-bottom: 18px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot {
+  position: absolute;
+  left: -18px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 2px solid var(--surface3);
+}
+.tl-dot.done { background: var(--green); border-color: var(--green); }
+.tl-dot.current { background: var(--blue); border-color: var(--blue); box-shadow: 0 0 0 3px rgba(10,132,255,0.2); }
+.tl-line {
+  position: absolute;
+  left: -14px;
+  top: 15px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--border);
+}
+.tl-item:last-child .tl-line { display: none; }
+
+/* ── MODAL ───────────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 50;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: #1c1c1e;
+  border-radius: 22px 22px 0 0;
+  padding: 10px 22px 32px;
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid var(--border2);
+  border-bottom: none;
+}
+.modal-handle { width: 36px; height: 4px; background: var(--surface3); border-radius: 2px; margin: 12px auto 20px; }
+.modal-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+.status-opt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14.5px;
+  margin-bottom: 6px;
+  transition: background 0.12s;
+  border: 1.5px solid transparent;
+}
+.status-opt:hover { background: var(--surface2); }
+.status-opt.sel { border-color: var(--blue); background: rgba(10,132,255,0.08); }
+
+/* ── MISC ────────────────────────────────────── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+.emergency-bg { background: linear-gradient(180deg, #1a0000 0%, #050000 100%); }
+.icon-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+}
+.row { display: flex; justify-content: space-between; align-items: center; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+
+/* ── FLASH ───────────────────────────────────── */
+.flash {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 12px 20px;
+  font-size: 14px;
+  z-index: 200;
+  opacity: 0;
+  transition: all 0.28s cubic-bezier(.34,1.56,.64,1);
+  white-space: nowrap;
+}
+.flash.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.flash-green { border-color: rgba(48,209,88,0.35); color: var(--green); }
+.flash-blue { border-color: rgba(10,132,255,0.35); color: var(--blue); }
+.flash-red { border-color: rgba(255,69,58,0.35); color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SPLASH SCREEN                               -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="splash">
+  <!-- Full logo SVG -->
+  <svg width="260" height="280" viewBox="0 0 260 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Circle ring -->
+    <circle cx="130" cy="110" r="88" stroke="#7a8060" stroke-width="2.5" fill="none"/>
+    <!-- Ground arc inside circle -->
+    <path d="M52 148 Q130 168 208 148" stroke="#7a8060" stroke-width="2" fill="none"/>
+    <!-- Mountains back left -->
+    <path d="M72 148 L100 98 L120 122 L72 148Z" fill="#a8a890" opacity="0.5"/>
+    <!-- Mountains back right -->
+    <path d="M188 148 L158 98 L140 122 L188 148Z" fill="#a8a890" opacity="0.5"/>
+    <!-- Mountain center (tallest) -->
+    <path d="M85 148 L130 68 L175 148Z" fill="#d4cdb8"/>
+    <!-- Snow cap center -->
+    <path d="M130 68 L118 90 L130 84 L142 90Z" fill="#f0ece0"/>
+    <!-- Mountain left -->
+    <path d="M60 148 L98 96 L128 148Z" fill="#c4bda8"/>
+    <!-- Snow cap left -->
+    <path d="M98 96 L90 110 L98 106 L106 110Z" fill="#e8e4d8"/>
+    <!-- Mountain right -->
+    <path d="M200 148 L162 96 L132 148Z" fill="#c4bda8"/>
+    <!-- Snow cap right -->
+    <path d="M162 96 L154 110 L162 106 L170 110Z" fill="#e8e4d8"/>
+    <!-- Pine tree center -->
+    <path d="M130 148 L130 133" stroke="#4a5c3a" stroke-width="2"/>
+    <path d="M118 148 L130 122 L142 148Z" fill="#5a6e48"/>
+    <path d="M120 142 L130 130 L140 142Z" fill="#6a7e55"/>
+    <!-- Pine tree left -->
+    <path d="M108 148 L108 136" stroke="#4a5c3a" stroke-width="1.5"/>
+    <path d="M98 148 L108 126 L118 148Z" fill="#4e6040"/>
+    <path d="M100 143 L108 133 L116 143Z" fill="#5a6e48"/>
+    <!-- Pine tree right -->
+    <path d="M152 148 L152 136" stroke="#4a5c3a" stroke-width="1.5"/>
+    <path d="M142 148 L152 126 L162 148Z" fill="#4e6040"/>
+    <path d="M144 143 L152 133 L160 143Z" fill="#5a6e48"/>
+    <!-- River winding path -->
+    <path d="M115 148 Q120 155 118 162 Q116 170 122 176 Q128 182 130 190" stroke="#7a9aaa" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M145 148 Q140 155 142 162 Q144 170 138 176 Q132 182 130 190" stroke="#6a8898" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6"/>
+    <!-- NORTH FORKS text -->
+    <text x="130" y="220" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700" letter-spacing="3" fill="#d4cdb8">NORTH FORKS</text>
+    <!-- Divider line -->
+    <line x1="60" y1="232" x2="200" y2="232" stroke="#7a8060" stroke-width="0.8"/>
+    <!-- APARTMENTS text -->
+    <text x="130" y="252" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-weight="400" letter-spacing="5" fill="#7a8060">APARTMENTS</text>
+  </svg>
+  <div class="splash-tagline">Maintenance Portal</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidenav">
+  <!-- Sidebar logo (icon only) -->
+  <div style="padding: 16px 10px 8px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:8px;">
+    <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" stroke="#7a8060" stroke-width="2" fill="none"/>
+      <path d="M22 66 Q50 74 78 66" stroke="#7a8060" stroke-width="1.5" fill="none"/>
+      <path d="M30 66 L50 28 L70 66Z" fill="#d4cdb8"/>
+      <path d="M50 28 L44 40 L50 37 L56 40Z" fill="#f0ece0"/>
+      <path d="M20 66 L38 40 L52 66Z" fill="#b8b29e" opacity="0.8"/>
+      <path d="M80 66 L62 40 L48 66Z" fill="#b8b29e" opacity="0.8"/>
+      <path d="M43 66 L50 52 L57 66Z" fill="#5a6e48"/>
+      <path d="M34 66 L40 53 L46 66Z" fill="#4e6040" opacity="0.9"/>
+      <path d="M54 66 L60 53 L66 66Z" fill="#4e6040" opacity="0.9"/>
+      <path d="M46 66 Q48 70 47 74 Q46 78 49 82" stroke="#7a9aaa" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <path d="M54 66 Q52 70 53 74 Q54 78 51 82" stroke="#6a8898" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+    </svg>
+    <div>
+      <div style="font-size:12px; font-weight:700; color:#d4cdb8; letter-spacing:0.5px; font-family: Georgia, serif;">North Forks</div>
+      <div style="font-size:10px; color:#7a8060; letter-spacing:1px; text-transform:uppercase;">Apartments</div>
+    </div>
+  </div>
+  <div class="sidenav-label">Tenant</div>
+  <button class="sidenav-btn active" onclick="go('welcome')">🏢 Welcome</button>
+  <button class="sidenav-btn" onclick="go('emergency')">🚨 Emergency Gate</button>
+  <button class="sidenav-btn" onclick="go('form1')">① Your Info</button>
+  <button class="sidenav-btn" onclick="go('form2')">② The Problem</button>
+  <button class="sidenav-btn" onclick="go('form3')">③ Access & Photos</button>
+  <button class="sidenav-btn" onclick="go('confirmation')">✅ Confirmation</button>
+  <button class="sidenav-btn" onclick="go('status')">📍 Request Status</button>
+  <div class="sidenav-label">Admin</div>
+  <button class="sidenav-btn" onclick="go('admin-dash')">📋 Dashboard</button>
+  <button class="sidenav-btn" onclick="go('admin-detail')">🔍 Request Detail</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 01 WELCOME                                  -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen active" id="screen-welcome">
+<div class="phone-wrap">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="phone-inner">
+    <div style="text-align:center; padding:28px 0 20px;">
+      <svg width="170" height="185" viewBox="0 0 260 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 4px; display:block;">
+        <circle cx="130" cy="110" r="88" stroke="#7a8060" stroke-width="2.5" fill="none"/>
+        <path d="M52 148 Q130 168 208 148" stroke="#7a8060" stroke-width="2" fill="none"/>
+        <path d="M72 148 L100 98 L120 122 L72 148Z" fill="#a8a890" opacity="0.4"/>
+        <path d="M188 148 L158 98 L140 122 L188 148Z" fill="#a8a890" opacity="0.4"/>
+        <path d="M85 148 L130 68 L175 148Z" fill="#d4cdb8"/>
+        <path d="M130 68 L118 90 L130 84 L142 90Z" fill="#f0ece0"/>
+        <path d="M60 148 L98 96 L128 148Z" fill="#c4bda8"/>
+        <path d="M98 96 L90 110 L98 106 L106 110Z" fill="#e8e4d8"/>
+        <path d="M200 148 L162 96 L132 148Z" fill="#c4bda8"/>
+        <path d="M162 96 L154 110 L162 106 L170 110Z" fill="#e8e4d8"/>
+        <path d="M130 148 L130 133" stroke="#4a5c3a" stroke-width="2"/>
+        <path d="M118 148 L130 122 L142 148Z" fill="#5a6e48"/>
+        <path d="M120 142 L130 130 L140 142Z" fill="#6a7e55"/>
+        <path d="M108 148 L108 136" stroke="#4a5c3a" stroke-width="1.5"/>
+        <path d="M98 148 L108 126 L118 148Z" fill="#4e6040"/>
+        <path d="M100 143 L108 133 L116 143Z" fill="#5a6e48"/>
+        <path d="M152 148 L152 136" stroke="#4a5c3a" stroke-width="1.5"/>
+        <path d="M142 148 L152 126 L162 148Z" fill="#4e6040"/>
+        <path d="M144 143 L152 133 L160 143Z" fill="#5a6e48"/>
+        <path d="M115 148 Q120 155 118 162 Q116 170 122 176 Q128 182 130 190" stroke="#7a9aaa" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <path d="M145 148 Q140 155 142 162 Q144 170 138 176 Q132 182 130 190" stroke="#6a8898" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <text x="130" y="220" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="28" font-weight="700" letter-spacing="3" fill="#d4cdb8">NORTH FORKS</text>
+        <line x1="60" y1="232" x2="200" y2="232" stroke="#7a8060" stroke-width="0.8"/>
+        <text x="130" y="252" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="13" letter-spacing="5" fill="#7a8060">APARTMENTS</text>
+      </svg>
+      <div style="font-size:13px; color:var(--muted); margin-top:6px;">Maintenance Request Portal</div>
+    </div>
+    <div class="card" style="text-align:center; padding:18px 20px;">
+      <div style="font-size:15px; font-weight:500; margin-bottom:5px;">Need something fixed?</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">Submit a request and we'll handle it. You'll get email updates at every step.</div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px;">
+      <div class="card-inset" style="text-align:center; padding:14px;">
+        <div style="font-size:22px; margin-bottom:5px;">⚡</div>
+        <div style="font-size:12px; color:var(--muted);">Fast response</div>
+      </div>
+      <div class="card-inset" style="text-align:center; padding:14px;">
+        <div style="font-size:22px; margin-bottom:5px;">📧</div>
+        <div style="font-size:12px; color:var(--muted);">Email updates</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="go('emergency')">Submit a Request →</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 02 EMERGENCY GATE                           -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-emergency">
+<div class="phone-wrap">
+<div class="phone emergency-bg">
+  <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="phone-inner">
+    <div style="text-align:center; padding:24px 0 20px;">
+      <div class="icon-circle" style="background:rgba(255,69,58,0.15);">🚨</div>
+      <div style="font-size:22px; font-weight:700; color:var(--red); margin-bottom:6px;">Before You Continue</div>
+      <div style="font-size:14px; color:var(--muted);">Is this a life-threatening emergency?</div>
+    </div>
+    <div class="card" style="border-color:rgba(255,69,58,0.18);">
+      <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Call immediately if:</div>
+      <div style="font-size:14px; line-height:2.1; color:var(--text2);">🔥 Fire or smoke<br>💧 Major flooding<br>⚡ Electrical sparks or shock<br>🏚️ Structural collapse<br>🛑 Gas smell</div>
+      <div class="divider"></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div class="card-inset" style="text-align:center;">
+          <div style="font-size:11px; color:var(--muted); margin-bottom:3px;">Emergency</div>
+          <div style="font-size:22px; font-weight:700; color:var(--red);">911</div>
+        </div>
+        <div class="card-inset" style="text-align:center;">
+          <div style="font-size:11px; color:var(--muted); margin-bottom:3px;">Building Manager</div>
+          <div style="font-size:16px; font-weight:700;">(555) 0100</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid; gap:8px; margin-top:4px;">
+      <button class="btn btn-danger" onclick="window.location.href='tel:911'">📞 This Is an Emergency — Call 911</button>
+      <button class="btn btn-ghost" onclick="go('form1')">Not an emergency — Continue →</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 03 FORM STEP 1                              -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-form1">
+<div class="phone-wrap">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="phone-inner">
+    <div class="progress"><div class="seg done"></div><div class="seg pending"></div><div class="seg pending"></div></div>
+    <div style="margin-bottom:22px;">
+      <div style="font-size:20px; font-weight:700; letter-spacing:-0.3px; margin-bottom:3px;">Your Information</div>
+      <div style="font-size:13px; color:var(--muted);">Step 1 of 3</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Apartment Unit</label>
+      <select class="inp" id="f1-unit">
+        <option value="">Select your unit…</option>
+        <option>Unit 101 — Floor 1</option><option>Unit 102 — Floor 1</option>
+        <option>Unit 103 — Floor 1</option><option>Unit 104 — Floor 1</option>
+        <option>Unit 105 — Floor 1</option><option>Unit 201 — Floor 2</option>
+        <option>Unit 202 — Floor 2</option><option>Unit 203 — Floor 2</option>
+        <option>Unit 204 — Floor 2</option><option>Unit 205 — Floor 2</option>
+        <option>Unit 301 — Floor 3</option><option>Unit 302 — Floor 3</option>
+        <option>Unit 303 — Floor 3</option><option>Unit 304 — Floor 3</option>
+        <option>Unit 305 — Floor 3</option>
+      </select>
+      <div class="err-msg" id="e-unit">Please select your unit.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Your Name</label>
+      <input class="inp" id="f1-name" type="text" placeholder="Full name">
+      <div class="err-msg" id="e-name">Please enter your name.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Email Address</label>
+      <input class="inp" id="f1-email" type="email" placeholder="you@example.com">
+      <div class="err-msg" id="e-email">Please enter a valid email address.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label" style="display:flex;justify-content:space-between;"><span>Phone Number</span><span style="font-weight:400;color:var(--surface3);">Optional</span></label>
+      <input class="inp" id="f1-phone" type="tel" placeholder="(555) 000-0000">
+    </div>
+    <button class="btn btn-blue" style="margin-top:6px;" onclick="validateStep1()">Continue →</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 04 FORM STEP 2                              -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-form2">
+<div class="phone-wrap">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="phone-inner">
+    <div class="progress"><div class="seg done"></div><div class="seg done"></div><div class="seg pending"></div></div>
+    <div style="margin-bottom:22px;">
+      <div style="font-size:20px; font-weight:700; letter-spacing:-0.3px; margin-bottom:3px;">Describe the Problem</div>
+      <div style="font-size:13px; color:var(--muted);">Step 2 of 3</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Category</label>
+      <select class="inp" id="f2-cat">
+        <option value="">Select a category…</option>
+        <option>⚡ Electrical</option><option>💧 Plumbing</option>
+        <option>🌬️ HVAC / Air Conditioning</option><option>🔑 Locks &amp; Keys</option>
+        <option>🪟 Windows &amp; Doors</option><option>🏗️ Structural / Walls</option>
+        <option>🐛 Pest Control</option><option>🔧 Appliances</option>
+        <option>💡 Lighting</option><option>🧹 Common Areas</option>
+        <option>📦 Other</option>
+      </select>
+      <div class="err-msg" id="e-cat">Please select a category.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Room / Location</label>
+      <select class="inp" id="f2-room">
+        <option value="">Where is the problem?</option>
+        <option>🍳 Kitchen</option><option>🛁 Bathroom</option>
+        <option>🛏️ Bedroom</option><option>🛋️ Living Room</option>
+        <option>🏠 Hallway / Entrance</option><option>🅿️ Parking / Garage</option>
+        <option>🏢 Building Common Area</option><option>🌿 Outdoor / Balcony</option>
+      </select>
+      <div class="err-msg" id="e-room">Please select the location.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Description</label>
+      <textarea class="inp" id="f2-desc" rows="4" placeholder="Describe what's wrong — the more detail, the better."></textarea>
+      <div class="err-msg" id="e-desc">Please describe the issue.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">How urgent is it?</label>
+      <div class="priority-grid" id="priority-grid">
+        <div class="priority-opt" onclick="setPriority(this,'low','sel-low')">🟢 Low</div>
+        <div class="priority-opt sel-med" onclick="setPriority(this,'med','sel-med')">🔵 Medium</div>
+        <div class="priority-opt" onclick="setPriority(this,'high','sel-high')">🟠 High</div>
+        <div class="priority-opt" onclick="setPriority(this,'urgent','sel-urgent')">🔴 Urgent</div>
+      </div>
+    </div>
+    <button class="btn btn-blue" onclick="validateStep2()">Continue →</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 05 FORM STEP 3 — ACCESS & PHOTOS           -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-form3">
+<div class="phone-wrap">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="phone-inner">
+    <div class="progress"><div class="seg done"></div><div class="seg done"></div><div class="seg done"></div></div>
+    <div style="margin-bottom:22px;">
+      <div style="font-size:20px; font-weight:700; letter-spacing:-0.3px; margin-bottom:3px;">Access & Photos</div>
+      <div style="font-size:13px; color:var(--muted);">Step 3 of 3 — Both fields are optional</div>
+    </div>
+
+    <!-- PHOTOS -->
+    <div class="field-group">
+      <label class="field-label" style="display:flex;justify-content:space-between;"><span>Photos / Videos</span><span style="font-weight:400;color:var(--surface3);">Optional</span></label>
+      <div class="photo-grid">
+        <div class="photo-slot" id="photo0" onclick="togglePhoto(0)">
+          <span>📷</span><span class="photo-slot-label">Add photo</span>
+        </div>
+        <div class="photo-slot" id="photo1" onclick="togglePhoto(1)">
+          <span style="font-size:26px;color:var(--surface3);">+</span>
+        </div>
+        <div class="photo-slot" id="photo2" onclick="togglePhoto(2)">
+          <span style="font-size:26px;color:var(--surface3);">+</span>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--muted);">Photos help us prepare the right tools and resolve faster.</div>
+    </div>
+
+    <!-- ACCESS NOTES (replaces entry authorization toggle) -->
+    <div class="field-group" style="margin-top:18px;">
+      <label class="field-label" style="display:flex;justify-content:space-between;"><span>Access Notes</span><span style="font-weight:400;color:var(--surface3);">Optional</span></label>
+      <textarea class="inp" id="f3-access" rows="4" placeholder="Example: dog inside, please knock first, call before entering, best time after 3 PM…"></textarea>
+      <div style="font-size:12px; color:var(--muted); margin-top:6px;">Help us access your unit safely and at the right time.</div>
+    </div>
+
+    <button class="btn btn-blue" style="margin-top:10px;" onclick="submitForm()">Submit Request →</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 06 CONFIRMATION                             -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-confirmation">
+<div class="phone-wrap">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="phone-inner">
+    <div style="text-align:center; padding:32px 0 24px;">
+      <div class="icon-circle" style="background:rgba(48,209,88,0.12);">✅</div>
+      <div style="font-size:23px; font-weight:700; letter-spacing:-0.4px; margin-bottom:6px;">Request Submitted!</div>
+      <div style="font-size:14px; color:var(--muted);">We'll be in touch soon.</div>
+    </div>
+    <div class="card" style="background:#071a0b; border-color:rgba(48,209,88,0.18); text-align:center; margin-bottom:12px;">
+      <div style="font-size:10px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;">Protocol Number</div>
+      <div style="font-size:28px; font-weight:700; color:var(--green); letter-spacing:2px;" id="conf-protocol">NF-2024-0046</div>
+    </div>
+    <div class="card" style="padding:14px 16px;">
+      <div class="row mb-8"><span style="font-size:13px;color:var(--muted);">Unit</span><span style="font-size:13px;font-weight:500;" id="conf-unit">—</span></div>
+      <div class="row mb-8"><span style="font-size:13px;color:var(--muted);">Category</span><span style="font-size:13px;" id="conf-cat">—</span></div>
+      <div class="row mb-8"><span style="font-size:13px;color:var(--muted);">Location</span><span style="font-size:13px;" id="conf-room">—</span></div>
+      <div class="row"><span style="font-size:13px;color:var(--muted);">Priority</span><span class="badge b-blue" id="conf-priority">Medium</span></div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:13px;padding:12px 15px;text-align:center;margin-bottom:12px;">
+      <div style="font-size:13px;color:var(--muted);">📧 Confirmation sent to <span style="color:var(--text);" id="conf-email">—</span></div>
+    </div>
+    <button class="btn btn-ghost" onclick="go('status')">Track This Request →</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 07 REQUEST STATUS                           -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-status">
+<div class="phone-wrap">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+  <div class="phone-inner">
+    <div class="row mb-16">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Protocol</div>
+        <div style="font-size:18px;font-weight:700;" id="status-protocol">NF-2024-0046</div>
+      </div>
+      <span class="badge b-red" id="status-badge">New</span>
+    </div>
+    <div class="card" style="padding:14px 16px;margin-bottom:14px;">
+      <div class="row mb-8"><span style="font-size:12px;color:var(--muted);">Unit</span><span style="font-size:13px;" id="status-unit">—</span></div>
+      <div class="row mb-8"><span style="font-size:12px;color:var(--muted);">Category</span><span style="font-size:13px;" id="status-cat">—</span></div>
+      <div class="row"><span style="font-size:12px;color:var(--muted);">Submitted</span><span style="font-size:13px;" id="status-date">—</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Progress</div>
+    <div class="card" style="padding:16px 18px;">
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot done"></div><div class="tl-line"></div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:2px;">Request Received</div>
+          <div style="font-size:12px;color:var(--muted);" id="tl-d0">—</div>
+        </div>
+        <div class="tl-item"><div class="tl-dot current" id="tl-dot1"></div><div class="tl-line"></div>
+          <div style="font-size:14px;font-weight:600;color:var(--blue);">Under Review</div>
+          <div style="font-size:12px;color:var(--muted);">Our team is reviewing your request</div>
+        </div>
+        <div class="tl-item"><div class="tl-dot" id="tl-dot2"></div><div class="tl-line"></div>
+          <div style="font-size:14px;color:var(--muted);">Scheduled</div>
+        </div>
+        <div class="tl-item"><div class="tl-dot" id="tl-dot3"></div><div class="tl-line"></div>
+          <div style="font-size:14px;color:var(--muted);">In Progress</div>
+        </div>
+        <div class="tl-item"><div class="tl-dot" id="tl-dot4"></div>
+          <div style="font-size:14px;color:var(--muted);">Completed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 08 ADMIN DASHBOARD                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-admin-dash">
+<div class="admin-wrap">
+  <div class="admin-header">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub" id="dash-date">Loading…</div>
+    </div>
+    <button class="btn btn-blue btn-sm" onclick="showFlash('Create request — coming soon.','flash-blue')">+ New Request</button>
+  </div>
+
+  <div style="background:rgba(255,69,58,0.07);border:1px solid rgba(255,69,58,0.18);border-radius:14px;padding:13px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+    <span style="font-size:16px;">⚠️</span>
+    <div style="flex:1;font-size:13.5px;"><strong style="color:var(--red);">2 requests</strong> <span style="color:var(--muted);">have exceeded their SLA deadline.</span></div>
+    <button class="btn-xs btn" style="background:rgba(255,69,58,0.12);color:var(--red);border:1px solid rgba(255,69,58,0.2);border-radius:9px;" onclick="applyFilter('overdue')">View →</button>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi kpi-active" id="kpi-all" onclick="applyFilter('all')"><div class="kpi-num" style="color:var(--text);">13</div><div class="kpi-label">Total Open</div></div>
+    <div class="kpi" id="kpi-new" onclick="applyFilter('new')"><div class="kpi-num" style="color:var(--red);">3</div><div class="kpi-label">New</div></div>
+    <div class="kpi" id="kpi-progress" onclick="applyFilter('progress')"><div class="kpi-num" style="color:var(--blue);">8</div><div class="kpi-label">In Progress</div></div>
+    <div class="kpi" id="kpi-parts" onclick="applyFilter('parts')"><div class="kpi-num" style="color:var(--amber);">2</div><div class="kpi-label">Waiting Parts</div></div>
+    <div class="kpi" id="kpi-overdue" onclick="applyFilter('overdue')"><div class="kpi-num" style="color:var(--red);">2</div><div class="kpi-label">Overdue</div></div>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-pill active" data-filter="all" onclick="applyFilter('all')">All</button>
+    <button class="filter-pill" data-filter="new" onclick="applyFilter('new')">New</button>
+    <button class="filter-pill" data-filter="reviewed" onclick="applyFilter('reviewed')">Reviewed</button>
+    <button class="filter-pill" data-filter="progress" onclick="applyFilter('progress')">In Progress</button>
+    <button class="filter-pill" data-filter="parts" onclick="applyFilter('parts')">Waiting Parts</button>
+    <button class="filter-pill" data-filter="scheduled" onclick="applyFilter('scheduled')">Scheduled</button>
+    <button class="filter-pill" data-filter="overdue" onclick="applyFilter('overdue')">⚠️ Overdue</button>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <div style="font-size:15px;font-weight:600;" id="table-title">All Requests</div>
+      <div style="font-size:12px;color:var(--muted);" id="table-count">5 requests</div>
+    </div>
+    <table><thead><tr>
+      <th>Protocol</th><th>Unit</th><th>Category</th><th>Status</th><th>Priority</th><th>SLA</th><th>Received</th>
+    </tr></thead><tbody id="req-tbody"></tbody></table>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 09 ADMIN REQUEST DETAIL                     -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-admin-detail">
+<div class="admin-wrap">
+  <div onclick="go('admin-dash')" class="back-link">← All Requests</div>
+  <div class="admin-header">
+    <div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:-0.3px;margin-bottom:6px;" id="det-protocol">NF-2024-0042</div>
+      <span class="badge b-blue" id="det-status-badge">In Progress</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="openPriorityModal()">Edit Priority</button>
+      <button class="btn btn-blue btn-sm" onclick="openStatusModal()">Update Status →</button>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div>
+      <div class="card mb-12">
+        <div class="row mb-12">
+          <div style="font-size:16px;font-weight:600;" id="det-cat-room">⚡ Electrical · Kitchen</div>
+          <span class="badge b-blue" id="det-priority-badge">Medium</span>
+        </div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:14px;" id="det-desc">The outlet near the sink stopped working. I tried resetting the breaker but it didn't help.</div>
+        <div id="det-access-wrap" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:11px;padding:11px 14px;font-size:13px;color:var(--muted);">
+          <span style="font-weight:600;color:var(--text2);">Access Notes: </span><span id="det-access">Dog inside, please knock before entering.</span>
+        </div>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Notes</div>
+
+      <div class="note note-internal mb-8">
+        <div class="note-meta">
+          <span class="note-tag-internal">🔒 Internal</span>
+          <span style="font-size:11px;color:var(--muted);">Sarah · Jun 15, 11:02 AM</span>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);">GFCI tripped. Mike will check today, might need replacement (~$40).</div>
+      </div>
+      <div class="note note-public mb-8">
+        <div class="note-meta">
+          <span class="note-tag-public">Public · visible to tenant</span>
+          <span style="font-size:11px;color:var(--muted);">Sarah · Jun 16, 9:00 AM</span>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);">Technician Mike is working on the outlet. Should be resolved today.</div>
+      </div>
+
+      <div id="extra-notes"></div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:4px;">
+        <textarea class="inp" id="note-input" rows="2" placeholder="Write a note…" style="margin-bottom:10px;"></textarea>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="btn btn-xs" style="background:rgba(255,159,10,0.12);color:var(--amber);border:1px solid rgba(255,159,10,0.2);border-radius:9px;" onclick="addNote(true)">🔒 Internal</button>
+          <button class="btn btn-blue btn-xs" onclick="addNote(false)">Send to Tenant</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb-12">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Tenant</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;" id="det-name">Maria Johnson</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:2px;" id="det-email">maria@email.com</div>
+        <div style="font-size:13px;color:var(--muted);" id="det-phone">(555) 123-4567</div>
+        <div class="divider"></div>
+        <div class="row"><span style="font-size:12px;color:var(--muted);">Unit</span><span style="font-size:13px;font-weight:500;" id="det-unit">101 · Floor 1</span></div>
+      </div>
+      <div class="card mb-12">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Timeline</div>
+        <div class="row mb-8"><span style="font-size:12px;color:var(--muted);">Submitted</span><span style="font-size:12.5px;" id="det-submitted">Jun 15, 9:41 AM</span></div>
+        <div class="row mb-8"><span style="font-size:12px;color:var(--muted);">SLA Deadline</span><span style="font-size:12.5px;color:var(--amber);" id="det-sla">Jun 16, 9:41 AM</span></div>
+        <div class="row"><span style="font-size:12px;color:var(--muted);">Last Update</span><span style="font-size:12.5px;" id="det-updated">Jun 16, 9:00 AM</span></div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Status History</div>
+        <div id="status-history">
+          <div class="mb-8">
+            <div style="font-size:12.5px;margin-bottom:3px;"><span class="badge b-gray" style="font-size:11px;">New</span> → <span class="badge b-gray" style="font-size:11px;">Reviewed</span></div>
+            <div style="font-size:11px;color:var(--muted);">Sarah · Jun 15, 11:02 AM</div>
+          </div>
+          <div>
+            <div style="font-size:12.5px;margin-bottom:3px;"><span class="badge b-gray" style="font-size:11px;">Reviewed</span> → <span class="badge b-blue" style="font-size:11px;">In Progress</span></div>
+            <div style="font-size:11px;color:var(--muted);">Sarah · Jun 16, 9:00 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- /main -->
+
+<!-- STATUS MODAL -->
+<div class="modal-overlay" id="modal-status">
+<div class="modal-sheet">
+  <div class="modal-handle"></div>
+  <div class="modal-title">Update Status</div>
+  <div id="status-opts"></div>
+  <div id="resolution-wrap" style="display:none;margin-top:10px;">
+    <label class="field-label">Resolution Summary <span style="color:var(--red);">— Required</span></label>
+    <textarea class="inp" id="resolution-txt" rows="3" placeholder="Describe what was done to resolve the issue…" style="margin-bottom:0;"></textarea>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;">
+    <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-status')">Cancel</button>
+    <button class="btn btn-blue btn-sm" onclick="confirmStatus()">Confirm</button>
+  </div>
+</div>
+</div>
+
+<!-- PRIORITY MODAL -->
+<div class="modal-overlay" id="modal-priority">
+<div class="modal-sheet">
+  <div class="modal-handle"></div>
+  <div class="modal-title">Set Priority</div>
+  <div id="priority-opts"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;">
+    <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-priority')">Cancel</button>
+    <button class="btn btn-blue btn-sm" onclick="confirmPriority()">Save</button>
+  </div>
+</div>
+</div>
+
+<!-- FLASH TOAST -->
+<div class="flash" id="flash-el"></div>
+
+<script>
+const REQUESTS = [
+  { id:'NF-2024-0045', unit:'101', cat:'⚡ Electrical',  status:'new',           sb:'b-red',   priority:'Urgent', pb:'b-red',   sla:'⚠️ Overdue', slaColor:'var(--red)',   overdue:true,  date:'Jun 17' },
+  { id:'NF-2024-0044', unit:'203', cat:'💧 Plumbing',    status:'in_progress',   sb:'b-blue',  priority:'High',   pb:'b-amber', sla:'6h left',    slaColor:'var(--muted)', overdue:true,  date:'Jun 16' },
+  { id:'NF-2024-0043', unit:'302', cat:'🌬️ HVAC',        status:'scheduled',     sb:'b-gray',  priority:'Medium', pb:'b-gray',  sla:'18h left',   slaColor:'var(--muted)', overdue:false, date:'Jun 15' },
+  { id:'NF-2024-0042', unit:'101', cat:'⚡ Electrical',  status:'in_progress',   sb:'b-blue',  priority:'Medium', pb:'b-blue',  sla:'32h left',   slaColor:'var(--green)', overdue:false, date:'Jun 15' },
+  { id:'NF-2024-0041', unit:'204', cat:'🔑 Locks',       status:'waiting_parts', sb:'b-amber', priority:'Low',    pb:'b-gray',  sla:'48h left',   slaColor:'var(--muted)', overdue:false, date:'Jun 14' },
+];
+const SL = { new:'New', reviewed:'Reviewed', scheduled:'Scheduled', in_progress:'In Progress', waiting_parts:'Waiting Parts', completed:'Completed', closed:'Closed' };
+const SB = { new:'b-red', reviewed:'b-gray', scheduled:'b-gray', in_progress:'b-blue', waiting_parts:'b-amber', completed:'b-green', closed:'b-gray' };
+const STATUSES = ['new','reviewed','scheduled','in_progress','waiting_parts','completed','closed'];
+const PRIORITIES = [{key:'Low',badge:'b-gray'},{key:'Medium',badge:'b-blue'},{key:'High',badge:'b-amber'},{key:'Urgent',badge:'b-red'}];
+
+let S = { priority:'med', formData:{}, currentStatus:'in_progress', selectedStatus:null, adminPriority:'Medium', selectedAdminPriority:'Medium', photos:[false,false,false] };
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidenav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.sidenav-btn').forEach(b => { if(b.getAttribute('onclick')===`go('${id}')`) b.classList.add('active'); });
+  if(id==='admin-dash') renderTable('all');
+}
+
+function showFlash(msg, cls) {
+  const el = document.getElementById('flash-el');
+  el.textContent = msg; el.className = 'flash '+(cls||'')+' show';
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function setErr(iid, eid, bad) {
+  document.getElementById(iid).classList.toggle('error', bad);
+  document.getElementById(eid).style.display = bad ? 'block' : 'none';
+  return bad;
+}
+
+function validateStep1() {
+  const unit=document.getElementById('f1-unit').value, name=document.getElementById('f1-name').value.trim(), email=document.getElementById('f1-email').value.trim();
+  const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const e1=setErr('f1-unit','e-unit',!unit), e2=setErr('f1-name','e-name',!name), e3=setErr('f1-email','e-email',!ok);
+  if(!e1&&!e2&&!e3) { S.formData={unit,name,email,phone:document.getElementById('f1-phone').value}; go('form2'); }
+}
+
+function setPriority(el, key, sel) {
+  S.priority=key;
+  document.querySelectorAll('.priority-opt').forEach(o => o.className='priority-opt');
+  el.classList.add(sel);
+}
+
+function validateStep2() {
+  const cat=document.getElementById('f2-cat').value, room=document.getElementById('f2-room').value, desc=document.getElementById('f2-desc').value.trim();
+  const e1=setErr('f2-cat','e-cat',!cat), e2=setErr('f2-room','e-room',!room), e3=setErr('f2-desc','e-desc',!desc);
+  if(!e1&&!e2&&!e3) { S.formData={...S.formData,cat,room,desc,priority:S.priority}; go('form3'); }
+}
+
+function togglePhoto(i) {
+  S.photos[i]=!S.photos[i];
+  const sl=document.getElementById('photo'+i);
+  if(S.photos[i]) { sl.classList.add('filled'); sl.innerHTML='<span>🖼️</span><span class="photo-slot-label">Tap to remove</span>'; }
+  else { sl.classList.remove('filled'); sl.innerHTML = i===0 ? '<span>📷</span><span class="photo-slot-label">Add photo</span>' : '<span style="font-size:26px;color:var(--surface3);">+</span>'; }
+}
+
+function submitForm() {
+  const num = Math.floor(Math.random()*900)+100;
+  const protocol = `NF-2024-0${num}`;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const timeStr = now.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  const pLabel = {low:'Low',med:'Medium',high:'High',urgent:'Urgent'}[S.priority]||'Medium';
+  const pBadge = {low:'b-gray',med:'b-blue',high:'b-amber',urgent:'b-red'}[S.priority]||'b-blue';
+  document.getElementById('conf-protocol').textContent = protocol;
+  document.getElementById('conf-unit').textContent = S.formData.unit||'—';
+  document.getElementById('conf-cat').textContent = S.formData.cat||'—';
+  document.getElementById('conf-room').textContent = S.formData.room||'—';
+  const pb=document.getElementById('conf-priority'); pb.textContent=pLabel; pb.className='badge '+pBadge;
+  document.getElementById('conf-email').textContent = S.formData.email||'—';
+  document.getElementById('status-protocol').textContent = protocol;
+  document.getElementById('status-unit').textContent = (S.formData.unit||'').replace('Unit ','').replace(' — ',', ');
+  document.getElementById('status-cat').textContent = S.formData.cat||'—';
+  document.getElementById('status-date').textContent = dateStr;
+  document.getElementById('tl-d0').textContent = timeStr;
+  go('confirmation');
+}
+
+function renderTable(filter) {
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter===filter));
+  document.querySelectorAll('.kpi').forEach(k => k.classList.remove('kpi-active'));
+  const km={all:'kpi-all',new:'kpi-new',progress:'kpi-progress',parts:'kpi-parts',overdue:'kpi-overdue'};
+  if(km[filter]) document.getElementById(km[filter]).classList.add('kpi-active');
+  const titles={all:'All Requests',new:'New',reviewed:'Reviewed',progress:'In Progress',parts:'Waiting Parts',scheduled:'Scheduled',overdue:'⚠️ Overdue'};
+  const filters={new:r=>r.status==='new',reviewed:r=>r.status==='reviewed',progress:r=>r.status==='in_progress',parts:r=>r.status==='waiting_parts',scheduled:r=>r.status==='scheduled',overdue:r=>r.overdue};
+  const data = filter==='all' ? REQUESTS : REQUESTS.filter(filters[filter]||(() => true));
+  document.getElementById('table-title').textContent = titles[filter]||'Requests';
+  document.getElementById('table-count').textContent = `${data.length} request${data.length!==1?'s':''}`;
+  document.getElementById('req-tbody').innerHTML = data.length
+    ? data.map(r=>`<tr onclick="openDetail('${r.id}','${r.unit}','${r.cat}','${r.status}','${r.sb}','${r.priority}','${r.pb}')">
+        <td style="font-weight:600;color:var(--text);">${r.id}</td>
+        <td><span style="background:var(--surface2);border-radius:8px;padding:3px 9px;font-size:12.5px;">${r.unit}</span></td>
+        <td>${r.cat}</td>
+        <td><span class="badge ${r.sb}">${SL[r.status]}</span></td>
+        <td><span class="badge ${r.pb}">${r.priority}</span></td>
+        <td style="color:${r.slaColor};font-size:12.5px;">${r.sla}</td>
+        <td style="color:var(--muted);font-size:12.5px;">${r.date}</td>
+      </tr>`).join('')
+    : `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px;">No requests found.</td></tr>`;
+}
+
+function applyFilter(f) { renderTable(f); }
+
+function openDetail(id,unit,cat,status,sb,priority,pb) {
+  document.getElementById('det-protocol').textContent=id;
+  const sbe=document.getElementById('det-status-badge'); sbe.textContent=SL[status]; sbe.className='badge '+sb;
+  document.getElementById('det-cat-room').textContent=cat+' · Kitchen';
+  const pbe=document.getElementById('det-priority-badge'); pbe.textContent=priority; pbe.className='badge '+pb;
+  document.getElementById('det-unit').textContent=unit+' · Floor 1';
+  S.currentStatus=status; S.selectedStatus=status; S.adminPriority=priority; S.selectedAdminPriority=priority;
+  go('admin-detail');
+}
+
+function openStatusModal() {
+  S.selectedStatus=S.currentStatus;
+  document.getElementById('resolution-wrap').style.display='none';
+  document.getElementById('resolution-txt').classList.remove('error');
+  document.getElementById('status-opts').innerHTML=STATUSES.map(s=>
+    `<div class="status-opt ${s===S.currentStatus?'sel':''}" onclick="selectStatus('${s}',this)">
+      <span>${SL[s]}</span><span class="badge ${SB[s]}" style="font-size:11px;">${SL[s]}</span>
+    </div>`).join('');
+  document.getElementById('modal-status').classList.add('open');
+}
+
+function selectStatus(key,el) {
+  S.selectedStatus=key;
+  document.querySelectorAll('#status-opts .status-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('resolution-wrap').style.display=key==='completed'?'block':'none';
+}
+
+function confirmStatus() {
+  if(!S.selectedStatus) return;
+  if(S.selectedStatus==='completed'&&!document.getElementById('resolution-txt').value.trim()) {
+    document.getElementById('resolution-txt').classList.add('error');
+    showFlash('Resolution summary is required for Completed.','flash-red'); return;
+  }
+  const label=SL[S.selectedStatus], badge=SB[S.selectedStatus];
+  S.currentStatus=S.selectedStatus;
+  const sbe=document.getElementById('det-status-badge'); sbe.textContent=label; sbe.className='badge '+badge;
+  const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  document.getElementById('det-updated').textContent=now;
+  document.getElementById('status-history').innerHTML+=`
+    <div style="margin-top:8px;">
+      <div style="font-size:12.5px;margin-bottom:3px;"><span class="badge b-gray" style="font-size:11px;">prev</span> → <span class="badge ${badge}" style="font-size:11px;">${label}</span></div>
+      <div style="font-size:11px;color:var(--muted);">Admin · ${now}</div>
+    </div>`;
+  closeModal('modal-status');
+  showFlash(`Status updated to ${label}`,'flash-green');
+}
+
+function openPriorityModal() {
+  S.selectedAdminPriority=S.adminPriority;
+  document.getElementById('priority-opts').innerHTML=PRIORITIES.map(p=>
+    `<div class="status-opt ${p.key===S.adminPriority?'sel':''}" onclick="selectAdminPriority('${p.key}',this)">
+      <span>${p.key}</span><span class="badge ${p.badge}" style="font-size:11px;">${p.key}</span>
+    </div>`).join('');
+  document.getElementById('modal-priority').classList.add('open');
+}
+
+function selectAdminPriority(key,el) {
+  S.selectedAdminPriority=key;
+  document.querySelectorAll('#priority-opts .status-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function confirmPriority() {
+  S.adminPriority=S.selectedAdminPriority;
+  const p=PRIORITIES.find(x=>x.key===S.adminPriority);
+  const pb=document.getElementById('det-priority-badge'); pb.textContent=p.key; pb.className='badge '+p.badge;
+  closeModal('modal-priority');
+  showFlash(`Priority set to ${p.key}`,'flash-blue');
+}
+
+function addNote(isInternal) {
+  const inp=document.getElementById('note-input'), text=inp.value.trim();
+  if(!text) { inp.classList.add('error'); return; }
+  inp.classList.remove('error');
+  const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  const div=document.createElement('div');
+  div.className=`note ${isInternal?'note-internal':'note-public'} mb-8`;
+  div.innerHTML=`<div class="note-meta"><span class="${isInternal?'note-tag-internal':'note-tag-public'}">${isInternal?'🔒 Internal':'Public · visible to tenant'}</span><span style="font-size:11px;color:var(--muted);">Admin · ${now}</span></div><div style="font-size:13.5px;color:var(--text2);">${text}</div>`;
+  document.getElementById('extra-notes').appendChild(div);
+  inp.value='';
+  showFlash(isInternal?'Internal note saved.':'Note sent to tenant.', isInternal?'flash-blue':'flash-green');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// Splash
+(function() {
+  const splash = document.getElementById('splash');
+  setTimeout(() => {
+    splash.classList.add('hide');
+    setTimeout(() => splash.classList.add('gone'), 650);
+  }, 2400);
+})();
+
+// Init
+renderTable('all');
+const D=new Date(), days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('dash-date').textContent=`${days[D.getDay()]}, ${months[D.getMonth()]} ${D.getDate()}, ${D.getFullYear()}`;
+</script>
+</body>
+</html>
