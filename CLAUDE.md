@@ -1,7 +1,7 @@
-# North Forks Apartments — Project Context
+# North Fork Apartments — Project Context
 
 ## What This Is
-A maintenance request management system for a residential apartment complex with 15 units. Tenants submit maintenance requests via a web app (accessed through a QR Code), and 3 administrators manage and track all requests.
+A maintenance request management system for a residential apartment complex with 16 units (numbered 1-12, 14, 15, 123, 124). Tenants submit maintenance requests via a web app (accessed through a QR Code), and 3 administrators manage and track all requests.
 
 ## Language Rules
 - **Conversations and planning**: Portuguese (between developer and Claude)
@@ -18,7 +18,7 @@ No technician role. No hierarchy between admins. All 3 admins can do everything.
 ## QR Code Model
 - **Single generic QR Code** for the entire building (not one per unit)
 - The QR Code is just a shortcut to the web app URL
-- Unit is selected manually by the tenant in the form (dropdown with 15 units)
+- Unit is selected manually by the tenant in the form (dropdown with 16 units)
 - No token system, no per-unit authentication
 
 ## Request Flow
@@ -73,7 +73,7 @@ Email notifications to tenant on: `scheduled`, `in_progress`, `waiting_on_parts`
 Schema file: `supabase/migrations/001_initial_schema.sql`
 
 Tables:
-- `units` — 15 fixed units, no token, no QR binding
+- `units` — 16 fixed units, no token, no QR binding
 - `categories` — configurable by admins, each has `sla_hours`
 - `admin_users` — exactly 3 accounts, equal permissions
 - `maintenance_requests` — core table; has `public_token` (48-char hex), `tenant_priority`, `admin_priority`, `technician_name` (free text, no entity), `resolution_summary` (required for `completed`)

@@ -1,5 +1,5 @@
 -- =============================================================================
--- North Forks Apartments — Schema Inicial
+-- North Fork Apartments — Schema Inicial
 -- =============================================================================
 -- Baseado no documento de requisitos aprovado.
 -- Regras de negócio críticas estão na camada de banco (triggers),
@@ -39,7 +39,7 @@ create type media_type as enum (
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
--- units — As 15 unidades fixas do complexo
+-- units — As 16 unidades fixas do complexo
 -- Sem token, sem QR Code vinculado. O QR Code é genérico para o prédio inteiro.
 -- A seleção da unidade é manual pelo inquilino no formulário.
 -- -----------------------------------------------------------------------------
@@ -499,20 +499,21 @@ insert into categories (name, description, sla_hours, icon, sort_order) values
   ('Cleaning',      'Common areas, trash, spills',                       48, 'trash',        8),
   ('Other',         'Issues not covered by other categories',            72, 'more-horizontal', 9);
 
--- As 15 unidades do complexo
+-- As 16 unidades do complexo
 insert into units (number, floor, block) values
-  ('101', '1', null),
-  ('102', '1', null),
-  ('103', '1', null),
-  ('104', '1', null),
-  ('105', '1', null),
-  ('201', '2', null),
-  ('202', '2', null),
-  ('203', '2', null),
-  ('204', '2', null),
-  ('205', '2', null),
-  ('301', '3', null),
-  ('302', '3', null),
-  ('303', '3', null),
-  ('304', '3', null),
-  ('305', '3', null);
+  ('1', null, null),
+  ('2', null, null),
+  ('3', null, null),
+  ('4', null, null),
+  ('5', null, null),
+  ('6', null, null),
+  ('7', null, null),
+  ('8', null, null),
+  ('9', null, null),
+  ('10', null, null),
+  ('11', null, null),
+  ('12', null, null),
+  ('14', null, null),
+  ('15', null, null),
+  ('123', null, null),
+  ('124', null, null);
