@@ -107,6 +107,29 @@ body {
 }
 .phone-inner { padding: 20px 20px 32px; }
 
+/* ── RESPONSIVE (real phones / tablets in portrait) ──
+   Below this width the dev screen-navigator sidebar and the
+   decorative phone bezel/fake status bar don't make sense —
+   tenants navigate via the in-screen buttons instead, and the
+   real device already shows its own status bar. */
+@media (max-width: 860px) {
+  .sidenav { display: none; }
+  .phone-wrap { padding: 0; min-height: 100vh; }
+  .phone {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+  .status-bar { display: none; }
+  .phone-inner {
+    padding: max(20px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
+  }
+}
+
 /* ── CARDS ───────────────────────────────────── */
 .card {
   background: var(--surface);
